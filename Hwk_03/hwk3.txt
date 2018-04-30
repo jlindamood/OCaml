@@ -1,0 +1,230 @@
+
+Questions to be answered, per question:
+
+1. What is the principle of induction that you will need to complete the proof?
+2. What is the base case you must prove?
+3. Prove the base case. In your proof, each step much have a justification.
+4. What is the inductive case you must prove?
+5. In the inductive case, what is the inductive hypothesis?
+6. Prove the inductive case. Each step in your proof must include a justification.
+
+//////////////////////////////////////////////
+QUESTION 1
+
+Function:
+let rec power n x =
+	match n with
+	| 0 -> 1.0
+	| _ -> x *. power (n-1) x
+
+SHOW: power n x = n^x
+
+1. Prove that for all x, power n x -> power n+1 x
+
+2. Base case is n = 0.
+
+3.
+	power 0 x = 1.0
+	definition of power
+	1.0 = x^0
+	understanding of ^ 
+
+4. power n x -> power n+1 x
+
+5. power n x = x^n
+
+6. power n+1 x = x^(n+1)
+	x *. power ((n+1)-1) x
+	definition of power
+	x *. power n x
+	addition
+	x *. x^n
+	inductive hypothesis
+	x^(n+1)
+	understanding of power rules
+
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+
+QUESTION 2
+
+type nat = Zero | Succ of nat
+
+let toInt = function
+	| Zero -> 0
+	| Succ n -> toInt n + 1
+
+let rec power n x = match n with
+	| Zero -> 1.0
+	| Succ n' -> x *. power n' x
+
+1. For all nat, power (toInt(Succ of nat) x = x^(toInt (Succ of nat)
+
+2. Base case is nat = Zero.
+
+3. power Zero x
+	1.0
+	definition of power
+	x^0
+	understanding of ^
+	x^(toInt(Zero))
+	definition of toInt
+
+4. power (Succ n) x = x^toInt(Succ n))
+
+5. power n' x = x^(toInt(n'))
+
+6. power (Succ n) x
+	x *. power n' x
+	definition of power
+	x *. x^toInt(n')
+	inductive hypothesis
+	x^(n'+1)
+	understanding of ^
+	x^(Succ n)
+	definition of nat
+
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+
+QUESTION 3
+
+let rec reverse l = match l with
+	| [] -> []
+	| (h::t) -> append (reverse t) [h]
+
+let rec append l1 l2 = match l1 with
+	| [] -> l2
+	| (h::t) -> h :: (append t l2)
+
+1. For all xs, reverse (append x::xs l2) = append (reverse l2) (reverse x::xs)
+
+2. Base case is empty list.
+
+3. reverse (append [] l2) = append (reverse l2) (reverse [])
+	reverse (l2)
+	definition of append
+	append (reverse l2) []
+	definition of reverse
+	append (reverse l2) (reverse [])
+	definition of reverse
+
+4. reverse (append x::xs l2) = append (reverse l2) (reverse x::xs)
+
+5. reverse (append xs l2) = append (reverse l2) (reverse xs)
+
+6. reverse (append x::xs l2)
+	reverse (x :: (append xs l2))
+	definition of append
+	append (reverse (append xs l2)) [x]
+	definition of reverse
+	append (append (reverse l2) (reverse xs)) [x]
+	induction hypothesis
+	append (reverse xs::reverse l2) [x]
+	definition of reverse
+	reverse (x::xs::l2)
+	definition of reverse
+	append (reverse l2) (reverse x::xs)
+	definition of reverse
+
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+
+QUESTION 4
+
+let isupper c = Char.code c >= Char.code 'A' &&
+				Char.code c <= Char.code 'Z'
+
+let rec someupper lst = match lst with
+	| [] -> false
+	| x::xs -> isupper x || someupper xs
+
+1. Show someupper xs --> someupper x::xs = someupper l1 || someupper l2
+
+2. Base case is the empty list
+
+3. someupper ([] @ l2) = someupper [] || someupper l2
+	someupper (l2)
+	understanding of append and []
+	false || someupper(l2)
+	understanding of (false || expression) = expression
+	someupper [] || someupper l2
+	definition of someupper
+
+4. someupper (x::xs @ l2) = someupper x::xs || someupper l2
+
+5. someupper (xs @ l2) = someupper xs || someupper l2
+
+6. someupper (x::xs @ l2)
+	someupper (x::(xs @ l2))
+	reorganizing
+	isupper x || someupper (xs@l2)
+	definition of someupper
+	isupper x || someupper xs || someupper l2
+	induction hypothesis
+	someupper (x::xs) || someupper l2
+	definition of someupper
+
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+
+QUESTION 5
+
+let isupper c = Char.code c >= Char.code 'A' &&
+				Char.code c <= Char.code 'Z'
+
+let rec someupper lst = match lst with
+	| [] -> false
+	| x::xs -> isupper x || someupper xs
+
+let rec foldr (f: 'a -> 'b -> 'b) (l: 'a list) (v: 'b) : 'b =
+	match l with
+	| [] -> v
+	| x::xs -> f x (foldr f xs v)
+
+let upperor c b = isupper c || b
+let foldupper lst = foldr upperor lst false
+
+1. Show that someupper c::chs = foldupper c::chs
+
+2. Base case is the empty list
+
+3. someupper [] = foldupper []
+	false
+	definition of someupper
+	foldr upperor [] false
+	definition of foldr
+	foldupper []
+	definition of foldupper
+
+4. someupper c::chs = foldupper c::chs
+
+5. someupper chs = foldupper chs
+
+6. someupper c::chs
+	isupper c || someupper chs
+	definition of someupper
+	isupper c || foldupper chs
+	inductive hypothesis
+	isupper c || foldr upperor chs false
+	definition of foldupper
+	isupper c || (foldr upperor chs false)
+	reorganizing
+	upperor c (foldr upperor chs false)
+	definition of upperor
+	upperor c (foldupper chs)
+	definition of foldr
+	upperor c (someupper chs)
+	inductive hypothesis
+	isupper c || (someupper chs)
+	definition of upperor
+	someupper c::chs
+	definition of someupper
+
+//////////////////////////////////////////////
+//////////////////////////////////////////////
+//////////////////////////////////////////////

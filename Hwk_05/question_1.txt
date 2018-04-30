@@ -1,0 +1,95 @@
+James Lindamood
+LINDA140
+
+* I initially collapsed some of the minor calculations then decided to reexpand them but may have not caught them all . . .
+
+i.e. evens_from a-1 b+1 straight to evens_from a-1 b+1 instead of calculate a-1 then b+1 in an additional line.
+
+sum (take 3 (evens_from 5 1))
+
+Call by Value:
+
+sum (take 3 (evens_from 5 1))
+sum (take 3 (1+1 :: evens_from (5-1) (1+1)))
+sum (take 3 (1+1 :: evens_from (4) (2)))
+sum (take 3 (1+1 :: 2+2 :: evens_from (4-1) (2+1)))
+sum (take 3 (1+1 :: 2+2 :: evens_from (3) (3)))
+sum (take 3 (1+1 :: 2+2 :: 3+3 :: evens_from (3-1) (3+1)))
+sum (take 3 (1+1 :: 2+2 :: 3+3 :: evens_from (2) (4)))
+sum (take 3 (1+1 :: 2+2 :: 3+3 :: 4+4 :: evens_from (2-1) (4+1)))
+sum (take 3 (1+1 :: 2+2 :: 3+3 :: 4+4 :: evens_from (1) (5)))
+sum (take 3 (1+1 :: 2+2 :: 3+3 :: 4+4 :: 5+5 :: evens_from (1-1) (5+1)))
+sum (take 3 (1+1 :: 2+2 :: 3+3 :: 4+4 :: 5+5 :: evens_from (0) (6)))
+sum (take 3 (1+1 :: 2+2 :: 3+3 :: 4+4 :: 5+5 :: []))
+sum (take 3 (1+1 :: 2+2 :: 3+3 :: 4+4 :: 10 :: []))
+sum (take 3 (1+1 :: 2+2 :: 3+3 :: 8 :: 10 :: []))
+sum (take 3 (1+1 :: 2+2 :: 6 :: 8 :: 10 :: []))
+sum (take 3 (1+1 :: 4 :: 6 :: 8 :: 10 :: []))
+sum (take 3 (2 :: 4 :: 6 :: 8 :: 10 :: []))
+sum (2 :: take 2 (2+2 :: 3+3 :: 4+4 :: 5+5 :: []))
+sum (2 :: 4 :: take 1 (3+3 :: 4+4 :: 5+5 :: []))
+sum (2 :: 4 :: 6 :: take 0 (4+4 :: 5+5 :: []))
+sum (2 :: 4 :: 6 :: [])
+2 + sum (4 :: 6 :: [])
+2 + 4 + sum (6:: [])
+2 + 4 + 6 + sum ([])
+2 + 4 + 6 + 0
+2 + 4 + 6
+2 + 10
+=12
+
+Call by Name:
+
+sum (take 3 (evens_from 5 1))
+sum (take 3 (1+1 :: evens_from (5-1) (1+1)))
+sum (take 3 (2 :: evens_from (5-1) (1+1)))
+sum (take 3 (2 :: evens_from (5-1) (1+1)))
+sum (2 :: take 3-1 (evens_from (5-1) (1+1)))
+2 + sum (take 3-1 (evens_from (5-1) (1+1))
+2 + sum (take 2 (evens_from (5-1) (1+1))
+2 + sum (take 2 (evens_from 4 2))
+2 + sum (take 2 (2+2 :: evens_from 4-1 2+1))
+2 + sum (take 2 (4 :: evens_from 4-1 2+1))
+2 + sum (4 take 2-1 (evens_from 4-1 2+1))
+2 + 4 + sum (take 2-1 (evens from 4-1 2+1))
+6 + sum (take 2-1 (evens from 4-1 2+1))
+6 + sum (take 1 (evens_from 4-1 2+1))
+6 + sum (take 1 (evens_from 3 3))
+6 + sum (take 1 (3+3 :: evens_from 3-1 3+1))
+6 + sum (take 1 (6 :: evens_from 3-1 3+1))
+6 + sum (6 :: take 1-1 (evens_from 3-1 3+1))
+6 + 6 + sum (take 1-1 (evens_from 3-1 3+1))
+12 + sum (take 1-1 (evens_from 3-1 3+1))
+12 + sum (take 0 (evens_from 3-1 3+1))
+12 + sum ([])
+12 + 0
+= 12
+
+Call by Need (Lazy Evaluation):
+
+sum (take 3 (evens_from 5 1))
+sum (take 3 (1+1 :: evens_from (5-1) (1+1)))
+sum (take 3 (1+1 :: evens_from (5-1) (1+1)))
+sum (take 3 (1+1 :: evens_from (5-1) (1+1)))
+sum (1+1 :: take 3-1 (evens_from (5-1) (1+1)))
+1+1 + sum (take 3-1 (evens_from (5-1) (1+1))
+2 + sum (take 3-1 (evens_from (5-1) (1+1))
+2 + sum (take 2 (evens_from (5-1) (1+1))
+2 + sum (take 2 (evens_from (5-1) 2))
+2 + sum (take 2 (2+2 :: evens_from 4-1 2+1))
+2 + sum (take 2 (2+2 :: evens_from 4-1 2+1))
+2 + sum (2+2 take 2-1 (evens_from 4-1 2+1))
+2 + 2+2 + sum (take 2-1 (evens from 4-1 2+1))
+2 + 4 + sum (take 2-1 (evens from 4-1 2+1))
+6 + sum (take 2-1 (evens from 4-1 2+1))
+6 + sum (take 1 (evens_from 4-1 2+1))
+6 + sum (take 1 (evens_from 3 3))
+6 + sum (take 1 (3+3 :: evens_from 3-1 3+1))
+6 + sum (take 1 (6 :: evens_from 3-1 3+1))
+6 + sum (6 :: take 1-1 (evens_from 3-1 3+1))
+6 + 6 + sum (take 1-1 (evens_from 3-1 3+1))
+12 + sum (take 1-1 (evens_from 3-1 3+1))
+12 + sum (take 0 (evens_from 3-1 3+1))
+12 + sum ([])
+12 + 0
+= 12
